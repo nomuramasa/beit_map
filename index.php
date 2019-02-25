@@ -4,7 +4,8 @@
 
 require_once('phpQuery.php'); // phpQueryの読み込み
 
-$url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
+$url = 'https://shotworks.jp/sw/list/a_01/wd_2019-02-27/sd_2/md_1/mj_17/work?wdf=2019-02-26&wtk=1&sv=-M1';
+// $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
 $host = parse_url($url, PHP_URL_HOST); // ホスト名 
 $scheme = parse_url($url, PHP_URL_SCHEME); // スキーマ
@@ -34,7 +35,6 @@ if($pager){ // 他にもページある場合のみ
 $i = 0; // カウント
 foreach($pages as $page){ // ページ数だけループ
 
-	$page = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; //取り敢えず1ページで練習
 
 	$html = file_get_contents($page); // htmlを取得
 	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
@@ -89,13 +89,15 @@ var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var no
 
 function initMap() {
 
+	var myhome = {lat: 35.825578, lng: 139.679758} // 自分の家
+
   // 地図を作成
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 11,
-    center: {lat: 35.695244, lng: 139.736932} // 市ヶ谷あたりを中心に
+    center: myhome // 自宅を中心に
   });
 
-	var n = 0 // カウント
+	var n = 1 // カウント(0は自宅用)
 	for(var job in jobInfo) { // 緯度と経度をたくさん用意
 		var info = jobInfo[job]
 
@@ -119,7 +121,7 @@ function initMap() {
 		  iw[n] = new google.maps.InfoWindow({
 		    position: new google.maps.LatLng(wor_lat, wor_long),
 		    content: info['title'],
-		    pixelOffset: new google.maps.Size( 0, -5 )
+		    pixelOffset: new google.maps.Size(0,-5)
 		  });
 		  markerEvent(n);  // マーカーにクリックイベントを追加
 
@@ -136,9 +138,20 @@ function initMap() {
 	  n++ // カウント
 	}
 
+	// 自宅マーカー
+	marker[0] = new google.maps.Marker({
+		position: myhome,
+		map: map,
+		icon: {
+			url: 'house.png', // 家の画像
+			scaledSize: new google.maps.Size(40, 40) //サイズ
+		}
+	});
+
+
 }
 </script>
 
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsgF9GId6mfoadD6VKTwkfGO0QGGBmitg&callback=initMap">//GoogleMapのAPIキー（&datum=wgs84）</script>
+<script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBsgF9GId6mfoadD6VKTwkfGO0QGGBmitg&callback=initMap'>//GoogleMapのAPIキー（&datum=wgs84）</script>
 
 <style> #map{height:100vh;} </style>
