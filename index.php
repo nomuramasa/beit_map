@@ -4,7 +4,8 @@
 
 require_once('phpQuery.php'); // phpQueryの読み込み
 
-$url = 'https://shotworks.jp/sw/list/a_01/wd_2019-02-27/sd_2/md_1/mj_17/work?wdf=2019-02-26&wtk=1&sv=-M1';
+$url = 'https://shotworks.jp/sw/list/wd_2019-03-01/sd_9/mj_17/work?istd=UA1lm8k&wtk=1&wdf=2019-02-27&sv=-M1';
+// $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-03-01/work?istd=UA1lm8k&wtk=1&wdf=2019-02-26&sv=-M1';
 // $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
 $host = parse_url($url, PHP_URL_HOST); // ホスト名 
