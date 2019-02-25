@@ -20,7 +20,7 @@ if($pager){ // 他にもページある場合のみ
 	$pages_a = $pager->find('li.link a'); // リンク先
 
 	foreach($pages_a as $page_a){ // 他ページの数だけ回す。この$page_as_aって配列だったの？
-		$k += 1; // カウント
+		$k++ ; // カウント
 		$page_a = pq($page_a); // jQueryでいうところの$()と同様の利用方法
 
 		$href = ($page_a)->attr('href'); // リンク先（ルートパス）
@@ -34,6 +34,8 @@ if($pager){ // 他にもページある場合のみ
 $i = 0; // カウント
 foreach($pages as $page){ // ページ数だけループ
 
+	$page = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; //取り敢えず1ページで練習
+
 	$html = file_get_contents($page); // htmlを取得
 	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
 	foreach($jobs as $job){ 
@@ -42,8 +44,6 @@ foreach($pages as $page){ // ページ数だけループ
 		$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
 		// まずは、1案件の場所情報を取得できるように
-		// $job_url = 'https://shotworks.jp/sw/detail/W004465270?wtk=1'; // 地図なしページ
-		// $job_url = 'https://shotworks.jp/sw/detail/W004464748?wtk=1'; // 地図ありページ
 		$job_html = file_get_contents($job_url); // 1案件のHTML
 		$doc = phpQuery::newDocument($job_html);
 
@@ -65,75 +65,80 @@ foreach($pages as $page){ // ページ数だけループ
 			$jobInfo[$i]['station'] = $station;
 		}
 
-		$i += 1; // カウント
+		$i++ ; // カウント
 	}
 }
 
 
-echo '<pre>';
-var_dump($jobInfo);
-echo '</pre>';
-
-	
-
+// echo '<pre>';
+// var_dump($jobInfo);
+// echo '</pre>';
 
 ?>
 
+
 <div id='map'></div> <!-- 地図表示 -->
 
-<?php for($i=0; $i<=0; $i++): ?>
+<script>
 
-	<script>
+// phpの配列を使う
+var jobInfo = <?php echo json_encode($jobInfo); ?>;
 
-	// 複数ある場合は配列を作る必要あり
-	var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var now_iw=null;
+// 複数ある場合は配列を作る必要あり
+var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var now_iw=null;
 
-	function initMap() {
+function initMap() {
 
-		// スクレイプした情報をjsに代入
-	  var jap_lat = <?php echo $jobInfo[0]['lat']; ?> 
-	  var jap_long = <?php echo $jobInfo[0]['long']; ?> 
+  // 地図を作成
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 11,
+    center: {lat: 35.695244, lng: 139.736932} // 市ヶ谷あたりを中心に
+  });
 
-	  // ショットワークの緯度経度は日本基準なので、Google世界基準に合わせる
-	  wor_lat[0] = jap_lat - jap_lat * 0.00010695 + jap_long * 0.000017464 + 0.0046017
-	  wor_long[0] = jap_long - jap_lat * 0.000046038 - jap_long * 0.000083043 + 0.01004
+	var n = 0 // カウント
+	for(var job in jobInfo) { // 緯度と経度をたくさん用意
+		var info = jobInfo[job]
 
+		if(info['lat'] && info['long']){ // 緯度と経度があるバイトのみ
 
-	  // 地図を作成
-	  map = new google.maps.Map(document.getElementById('map'), {
-	    zoom: 13,
-	    center: {lat: wor_lat[0], lng: wor_long[0]} //今はマーカー1つだから中心もそこに合わせてるけど、あとで平均を求めるようにする
-	  });
+			// スクレイプした情報をjsに代入
+		  var jap_lat = info['lat']
+		  var jap_long = info['long'] 
 
-		// マーカーを作成
-	  marker[0] = new google.maps.Marker({
-	    position: {lat: wor_lat[0], lng: wor_long[0]},  
-	    map: map
-	  });
+		  // ショットワークの緯度経度は日本基準なので、Google世界基準に合わせる
+		  wor_lat = jap_lat - jap_lat * 0.00010695 + jap_long * 0.000017464 + 0.0046017
+		  wor_long = jap_long - jap_lat * 0.000046038 - jap_long * 0.000083043 + 0.01004
 
-		// 吹き出し
-	  iw[0] = new google.maps.InfoWindow({
-	    position: new google.maps.LatLng(wor_lat, wor_long),
-	    content: '<?php echo $jobInfo[0]["title"]; ?>',
-	    pixelOffset: new google.maps.Size( 0, -5 )
-	  });
-	  markerEvent(); //(i)にする // マーカーにクリックイベントを追加
+			// マーカーを作成
+		  marker[n] = new google.maps.Marker({
+		    position: {lat: wor_lat, lng: wor_long},  
+		    map: map
+		  });
 
-	  // マーカークリックで吹き出し表示
-		function markerEvent() {　// (i)にする
-			marker[0].addListener('click', function() { // マーカーをクリックしたとき
-				if(now_iw) { now_iw.close(); } // 他の吹き出しが開いてる場合は閉じる
-				iw[0].open(map, marker[0]); // 吹き出しを表示
-				now_iw = iw[0]; // 今の吹き出しを設定しとく
-			});
+			// 吹き出し
+		  iw[n] = new google.maps.InfoWindow({
+		    position: new google.maps.LatLng(wor_lat, wor_long),
+		    content: info['title'],
+		    pixelOffset: new google.maps.Size( 0, -5 )
+		  });
+		  markerEvent(n);  // マーカーにクリックイベントを追加
+
+		  // マーカークリックで吹き出し表示
+			function markerEvent(n) {　
+				marker[n].addListener('click', function() { // マーカーをクリックしたとき
+					if(now_iw) { now_iw.close(); } // 他の吹き出しが開いてる場合は閉じる
+					iw[n].open(map, marker[n]); // 吹き出しを表示
+					now_iw = iw[n]; // 今の吹き出しを設定しとく
+				});
+			}
+
 		}
-
+	  n++ // カウント
 	}
 
-	</script>
-
-<?php endfor; ?>
+}
+</script>
 
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsgF9GId6mfoadD6VKTwkfGO0QGGBmitg&callback=initMap">//GoogleMapのAPIキー（&datum=wgs84）</script>
 
-<style>#map{height:85vh; /*width:100%;*/ /*margin:0 auto*/;}</style>
+<style> #map{height:100vh;} </style>
