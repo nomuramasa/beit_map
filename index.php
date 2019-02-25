@@ -10,62 +10,71 @@ $host = parse_url($url, PHP_URL_HOST); // ホスト名
 $scheme = parse_url($url, PHP_URL_SCHEME); // スキーマ
 
 
-// まずは、1ページ目の中だけ
 
-$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
+$k = 0; // カウント
+$pages[$k] = $url; // 今のページのURLを、$pages[0]へ
+
+// 他のページもある場合は、全ページ一気に解析しよう
+$pager = phpQuery::newDocument($html)->find('ul.pager:eq(1)'); // ページャー(2箇所中1つのみ)
+if($pager){ // 他にもページある場合のみ
+	$pages_a = $pager->find('li.link a'); // リンク先
+
+	foreach($pages_a as $page_a){ // 他ページの数だけ回す。この$page_as_aって配列だったの？
+		$k += 1; // カウント
+		$page_a = pq($page_a); // jQueryでいうところの$()と同様の利用方法
+
+		$href = ($page_a)->attr('href'); // リンク先（ルートパス）
+		$page_url = $scheme.'://'.$host.$href;  // ホスト名と組み合わせて、他ページへのURL完成。これも全ページ解析する。
+
+		$pages[$k] = $page_url; // 他のページ達を、配列に格納
+	}
+}
+
 
 $i = 0; // カウント
-foreach($jobs as $job){ 
-	$job = pq($job); 
-	$href = ($job)->attr('href'); 
-	$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
+foreach($pages as $page){ // ページ数だけループ
 
-	// まずは、1案件の場所情報を取得できるように
-	// $job_url = 'https://shotworks.jp/sw/detail/W004465270?wtk=1'; // 地図なしページ
-	// $job_url = 'https://shotworks.jp/sw/detail/W004464748?wtk=1'; // 地図ありページ
-	$job_html = file_get_contents($job_url); // 1案件のHTML
-	$doc = phpQuery::newDocument($job_html);
+	$html = file_get_contents($page); // htmlを取得
+	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
+	foreach($jobs as $job){ 
+		$job = pq($job); 
+		$href = ($job)->attr('href'); 
+		$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
-	$title = $doc->find('.catchPhraseBody h2')->text(); // タイトル
-	$lat = $doc->find('#traffic #latitude')->val(); // 緯度
-	$long = $doc->find('#traffic #longitude')->val(); // 経度
-	$station = $doc->find('#traffic dl:eq(2) dd span.highlight01')->text(); // 駅
-	// $distance = phpQuery::newDocument($job_html)->find('#traffic dl:eq(2) dd'); // 距離
+		// まずは、1案件の場所情報を取得できるように
+		// $job_url = 'https://shotworks.jp/sw/detail/W004465270?wtk=1'; // 地図なしページ
+		// $job_url = 'https://shotworks.jp/sw/detail/W004464748?wtk=1'; // 地図ありページ
+		$job_html = file_get_contents($job_url); // 1案件のHTML
+		$doc = phpQuery::newDocument($job_html);
 
-	// 情報に代入
-	$jobInfo[$i]['title'] = $title;
-	// echo $jobInfo['title'];
+		$title = $doc->find('.catchPhraseBody h2')->text(); // タイトル
+		$lat = $doc->find('#traffic #latitude')->val(); // 緯度
+		$long = $doc->find('#traffic #longitude')->val(); // 経度
+		$station = $doc->find('#traffic dl:eq(2) dd span.highlight01')->text(); // 駅
+		// $distance = phpQuery::newDocument($job_html)->find('#traffic dl:eq(2) dd'); // 距離
 
-	if($lat && $long){ // 地図あり
-		$jobInfo[$i]['lat'] = $lat;
-		$jobInfo[$i]['long'] = $long;
+		// 情報に代入
+		$jobInfo[$i]['title'] = $title;
+		// echo $jobInfo['title'];
 
-	}else{ //地図なし
-		$jobInfo[$i]['station'] = $station;
+		if($lat && $long){ // 地図あり
+			$jobInfo[$i]['lat'] = $lat;
+			$jobInfo[$i]['long'] = $long;
+
+		}else{ //地図なし
+			$jobInfo[$i]['station'] = $station;
+		}
+
+		$i += 1; // カウント
 	}
-
-	$i += 1; // カウント
 }
+
 
 echo '<pre>';
 var_dump($jobInfo);
 echo '</pre>';
 
-// 他のページもある場合は、全ページ一気に解析しよう
 	
-// $pager = phpQuery::newDocument($html)->find('ul.pager:eq(1)'); // pager(2箇所中1つのみ)
-// if($pager){ // 他にもページある場合のみ
-	// $pages_a = $pager->find('li.link a'); // リンク先
-
-	// foreach($pages_a as $page_a){ // 他ページの数だけ回す。この$page_as_aって配列だったの？
-	// 	$page_a = pq($page_a); // jQueryでいうところの$()と同様の利用方法
-
-	// 	$href = ($page_a)->attr('href'); // リンク先（ルートパス）
-	// 	$page_url = $scheme.'://'.$host.$href;  // ホスト名と組み合わせて、他ページへのURLを完成させる。これも全ページ解析する。
-	// 	// echo $page_url; // 
-	// 	// echo '<br>'; // 改行
-	// }
-// }
 
 
 ?>
