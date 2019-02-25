@@ -7,6 +7,7 @@ require_once('phpQuery.php'); // phpQueryの読み込み
 $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
 $host = parse_url($url, PHP_URL_HOST); // ホスト名 
+$scheme = parse_url($url, PHP_URL_SCHEME); // スキーマ
 
 
 // まずは、1ページ目の中だけ
@@ -17,7 +18,7 @@ $i = 0; // カウント
 foreach($jobs as $job){ 
 	$job = pq($job); 
 	$href = ($job)->attr('href'); 
-	$job_url = $host.$href; // 仕事詳細のURL
+	$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
 	// まずは、1案件の場所情報を取得できるように
 	// $job_url = 'https://shotworks.jp/sw/detail/W004465270?wtk=1'; // 地図なしページ
@@ -46,6 +47,9 @@ foreach($jobs as $job){
 	$i += 1; // カウント
 }
 
+echo '<pre>';
+var_dump($jobInfo);
+echo '</pre>';
 
 // 他のページもある場合は、全ページ一気に解析しよう
 	
@@ -57,7 +61,7 @@ foreach($jobs as $job){
 	// 	$page_a = pq($page_a); // jQueryでいうところの$()と同様の利用方法
 
 	// 	$href = ($page_a)->attr('href'); // リンク先（ルートパス）
-	// 	$page_url = $host.$href;  // ホスト名と組み合わせて、他ページへのURLを完成させる。これも全ページ解析する。
+	// 	$page_url = $scheme.'://'.$host.$href;  // ホスト名と組み合わせて、他ページへのURLを完成させる。これも全ページ解析する。
 	// 	// echo $page_url; // 
 	// 	// echo '<br>'; // 改行
 	// }
