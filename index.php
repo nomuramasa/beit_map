@@ -1,10 +1,14 @@
+<form action='./' method='post'>
+	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:700px'>　<input type='submit' value='探す'>
+</form>
+
 <?php
 // $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-02-25/sd_2/md_1/work?istd=UA1lm8k&wtk=1&wdf=2019-02-25&sv=-M1'; // 1ページのみの場合
 // スマホ用htmlは別で、クラスとかがまた変わってくるから、常にPC番のhtmlを取得するとか工夫が必要
 
 require_once('phpQuery.php'); // phpQueryの読み込み
 
-$url = 'https://shotworks.jp/sw/list/wd_2019-03-01/sd_9/mj_17/work?istd=UA1lm8k&wtk=1&wdf=2019-02-27&sv=-M1';
+$url = $_POST['url'];
 // $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-03-01/work?istd=UA1lm8k&wtk=1&wdf=2019-02-26&sv=-M1';
 // $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
@@ -40,7 +44,7 @@ foreach($pages as $page){ // ページ数だけループ
 	$html = file_get_contents($page); // htmlを取得
 	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
 	foreach($jobs as $job){ 
-		$job = pq($job); 
+		$job = pq($job);
 		$href = ($job)->attr('href'); 
 		$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
@@ -48,32 +52,40 @@ foreach($pages as $page){ // ページ数だけループ
 		$job_html = file_get_contents($job_url); // 1案件のHTML
 		$doc = phpQuery::newDocument($job_html);
 
-		$title = $doc->find('.catchPhraseBody h2')->text(); // タイトル
+		$content = $doc->find('.catchPhraseBody')->text(); // タイトルっていうか内容
+		// $content = $doc->find('.maincolbodyContents02')->text(); // 多い内容
 		$lat = $doc->find('#traffic #latitude')->val(); // 緯度
 		$long = $doc->find('#traffic #longitude')->val(); // 経度
 		$station = $doc->find('#traffic dl:eq(2) dd span.highlight01')->text(); // 駅
 		// $distance = phpQuery::newDocument($job_html)->find('#traffic dl:eq(2) dd'); // 距離
 
 		// 情報に代入
-		$jobInfo[$i]['title'] = $title;
-		// echo $jobInfo['title'];
+		$jobInfo[$i]['link'] = '<p style="text-align:center"><a href="'.$job_url.'" target="_blank">詳細ページへ</a></p>';	 // リンク
+		$jobInfo[$i]['content'] = $content; // 内容
 
-		if($lat && $long){ // 地図あり
+		// if(empty($lat)){ //地図なしの場合
+		// 	if($station){ // 駅名だけでも取得できた場合
+		// 		$url = 'https://www.geocoding.jp/api/?q='.$station;
+		// 		$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
+		// 		$lat = $xml->coordinate->lat[0];
+		// 		$long = $xml->coordinate->lng[0];
+		// 	}
+		// 	// $jobInfo[$i]['station'] = $station; // 配列に駅情報も足す
+		// }
+
+		if($lat && $long){ // 緯度経度セット済みの場合 // 駅名も無い場合は地図にも出ない
 			$jobInfo[$i]['lat'] = $lat;
 			$jobInfo[$i]['long'] = $long;
-
-		}else{ //地図なし
-			$jobInfo[$i]['station'] = $station;
-		}
+		}	
 
 		$i++ ; // カウント
 	}
 }
 
 
-// echo '<pre>';
-// var_dump($jobInfo);
-// echo '</pre>';
+echo '<pre>';
+var_dump($jobInfo);
+echo '</pre>';
 
 ?>
 
@@ -121,7 +133,7 @@ function initMap() {
 			// 吹き出し
 		  iw[n] = new google.maps.InfoWindow({
 		    position: new google.maps.LatLng(wor_lat, wor_long),
-		    content: info['title'],
+		    content: info['content']+'<hr>'+info['link'],
 		    pixelOffset: new google.maps.Size(0,-5)
 		  });
 		  markerEvent(n);  // マーカーにクリックイベントを追加
@@ -155,4 +167,4 @@ function initMap() {
 
 <script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBsgF9GId6mfoadD6VKTwkfGO0QGGBmitg&callback=initMap'>//GoogleMapのAPIキー（&datum=wgs84）</script>
 
-<style> #map{height:100vh;} </style>
+<style> #map{height:92vh;} </style>
