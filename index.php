@@ -65,7 +65,7 @@ foreach($pages as $page){ // ページ数だけループ
 
 		if(empty($lat)){ //地図なしの場合
 			if($station){ // 駅名だけでも取得できた場合
-				$url = 'https://www.geocoding.jp/api/?q='.$station;
+				$url = 'https://www.geocoding.jp/api/?v=1.1&q='.$station; // MAMPではv=1.1&は必要なかった（v=1.2が使えた）けど、AWSでは1.1指定の必要あり
 				$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
 				$obj = get_object_vars($xml); // xmlを配列に
 				$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
