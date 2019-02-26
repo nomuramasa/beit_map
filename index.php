@@ -63,15 +63,18 @@ foreach($pages as $page){ // ページ数だけループ
 		$jobInfo[$i]['link'] = '<p style="text-align:center"><a href="'.$job_url.'" target="_blank">詳細ページへ</a></p>';	 // リンク
 		$jobInfo[$i]['content'] = $content; // 内容
 
-		// if(empty($lat)){ //地図なしの場合
-		// 	if($station){ // 駅名だけでも取得できた場合
-		// 		$url = 'https://www.geocoding.jp/api/?q='.$station;
-		// 		$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
-		// 		$lat = $xml->coordinate->lat[0];
-		// 		$long = $xml->coordinate->lng[0];
-		// 	}
-		// 	// $jobInfo[$i]['station'] = $station; // 配列に駅情報も足す
-		// }
+		if(empty($lat)){ //地図なしの場合
+			if($station){ // 駅名だけでも取得できた場合
+				$url = 'https://www.geocoding.jp/api/?q='.$station;
+				$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
+				$obj = get_object_vars($xml); // xmlを配列に
+				$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
+				$coord = get_object_vars($coord_xml); // xmlを配列に
+				$lat = $coord['lat'];
+				$long = $coord['lng'];
+			}
+			// $jobInfo[$i]['station'] = $station; // 配列に駅情報も足す
+		}
 
 		if($lat && $long){ // 緯度経度セット済みの場合 // 駅名も無い場合は地図にも出ない
 			$jobInfo[$i]['lat'] = $lat;
@@ -82,10 +85,9 @@ foreach($pages as $page){ // ページ数だけループ
 	}
 }
 
-
-echo '<pre>';
-var_dump($jobInfo);
-echo '</pre>';
+// echo '<pre>';
+// var_dump($jobInfo);
+// echo '</pre>';
 
 ?>
 
