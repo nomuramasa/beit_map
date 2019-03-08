@@ -1,3 +1,6 @@
+<!-- ファビコン -->
+<link rel='icon' href='./favicon.ico'>
+
 <form action='./' method='post'>
 	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:700px'>　<input type='submit' value='探す'>
 </form>

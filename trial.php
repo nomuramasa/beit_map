@@ -1,26 +1,31 @@
 <?php
 
-$api = 'https://www.geocoding.jp/api/?q=';
-$station = '新宿駅';
-$url = $api.$station;
+$url = 'http://www.ekidata.jp/api/l/11302.xml';
 
-$xml = simplexml_load_file($url); // これでURLをxmlデータとして使える
+$xml = simplexml_load_file($url);
 
-$obj = get_object_vars($xml);
+var_dump($xml);
+// $api = 'https://www.geocoding.jp/api/?q=';
+// $station = '新宿駅';
+// $url = $api.$station;
 
-echo '<pre>';
-var_dump($obj);
-echo '</pre>';
+// $xml = simplexml_load_file($url); // これでURLをxmlデータとして使える
 
-echo '<hr>';
+// $obj = get_object_vars($xml);
 
-$coordinate = $obj['coordinate'];
+// echo '<pre>';
+// var_dump($obj);
+// echo '</pre>';
 
-$coordinate = get_object_vars($coordinate);
+// echo '<hr>';
 
-$lat = $coordinate['lat'];
+// $coordinate = $obj['coordinate'];
 
-var_dump($lat);
+// $coordinate = get_object_vars($coordinate);
+
+// $lat = $coordinate['lat'];
+
+// var_dump($lat);
 
 // var_dump($xml->coordinate); 
 // // lat_dmsやlng_dmsの緯度経度DMSとは何のこと？
