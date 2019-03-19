@@ -5,7 +5,7 @@
 	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:600px'>　
 	<b>自宅</b> <input type='text' name='home'> 
 	&nbsp;&nbsp;&nbsp;<input type='submit' value='探す'>
-	　 <a href='explain' target='_blank'>使い方 →</a>
+	　 　<a href='explain' target='_blank' style='text-decoration: none; font-size: 12px;'>使い方</a>
 </form>
 
 
@@ -17,7 +17,7 @@
 require_once('phpQuery.php'); // phpQueryの読み込み
 
 $url = $_POST['url'];
-$home = $_POST['home'];
+
 // $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-03-01/work?istd=UA1lm8k&wtk=1&wdf=2019-02-26&sv=-M1';
 // $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
@@ -98,6 +98,18 @@ foreach($pages as $page){ // ページ数だけループ
 // var_dump($jobInfo);
 // echo '</pre>';
 
+// 自宅を求める
+$home = $_POST['home'];
+$url = 'https://www.geocoding.jp/api/?q='.$home;
+$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
+$obj = get_object_vars($xml); // xmlを配列に
+$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
+$coord = get_object_vars($coord_xml); // xmlを配列に
+$lat = $coord['lat'];
+$long = $coord['lng'];
+$homeInfo['lat'] = $lat;
+$homeInfo['long'] = $long;
+
 ?>
 
 
@@ -107,13 +119,15 @@ foreach($pages as $page){ // ページ数だけループ
 
 // phpの配列を使う
 var jobInfo = <?php echo json_encode($jobInfo); ?>;
+var homeInfo = <?php echo json_encode($homeInfo); ?>;
 
 // 複数ある場合は配列を作る必要あり
 var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var now_iw=null;
 
+
 function initMap() {
 
-	var myhome = {lat: 35.825578, lng: 139.679758} // 自分の家
+	var myhome = {lat: homeInfo['lat'], lng: homeInfo['long']} // 自分の家
 
   // 地図を作成
   map = new google.maps.Map(document.getElementById('map'), {
