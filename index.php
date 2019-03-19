@@ -5,7 +5,7 @@
 	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:600px'>　
 	<b>自宅</b> <input type='text' name='home'> 
 	&nbsp;&nbsp;&nbsp;<input type='submit' value='探す'>
-	　 　<a href='explain' target='_blank' style='text-decoration: none; font-size: 12px;'>使い方</a>
+	&nbsp;&nbsp;&nbsp;<a href='explain' target='_blank' style='text-decoration: none; font-size: 12px;'>使い方</a>
 </form>
 
 
@@ -98,17 +98,23 @@ foreach($pages as $page){ // ページ数だけループ
 // var_dump($jobInfo);
 // echo '</pre>';
 
-// 自宅を求める
-$home = $_POST['home'];
-$url = 'https://www.geocoding.jp/api/?q='.$home;
-$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
-$obj = get_object_vars($xml); // xmlを配列に
-$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
-$coord = get_object_vars($coord_xml); // xmlを配列に
-$lat = $coord['lat'];
-$long = $coord['lng'];
-$homeInfo['lat'] = $lat;
-$homeInfo['long'] = $long;
+
+if($_POST['home']){ // geocoadingで自宅の緯度経度を取得できた場合
+	$home = $_POST['home'];
+	$url = 'https://www.geocoding.jp/api/?q='.$home;
+	$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
+	$obj = get_object_vars($xml); // xmlを配列に
+	$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
+	$coord = get_object_vars($coord_xml); // xmlを配列に
+	$lat = $coord['lat'];
+	$long = $coord['lng'];
+	$homeInfo['lat'] = $lat;
+	$homeInfo['long'] = $long;
+}else{
+	// 野村の家
+	$homeInfo['lat'] = 35.8280597;
+	$homeInfo['long'] = 139.6800843;
+}
 
 ?>
 
@@ -127,8 +133,8 @@ var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var no
 
 function initMap() {
 
-	var myhome = {lat: homeInfo['lat'], lng: homeInfo['long']} // 自分の家
-
+	var myhome = {lat: Number(homeInfo['lat']), lng: Number(homeInfo['long'])} // 自分の家
+console.log(myhome)
   // 地図を作成
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 11,
