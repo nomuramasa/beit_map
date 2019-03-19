@@ -1,9 +1,14 @@
-<!-- ファビコン -->
-<link rel='icon' href='./favicon.ico'>
+<link rel='icon' href='./favicon.ico'> <!-- ファビコン -->
+<title>バイト探し地図</title>
 
 <form action='./' method='post'>
-	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:700px'>　<input type='submit' value='探す'>
+	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:600px'>　
+	<b>自宅</b> <input type='text' name='home'> 
+	&nbsp;&nbsp;&nbsp;<input type='submit' value='探す'>
+	　 <a href='explain' target='_blank'>使い方 →</a>
 </form>
+
+
 
 <?php
 // $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-02-25/sd_2/md_1/work?istd=UA1lm8k&wtk=1&wdf=2019-02-25&sv=-M1'; // 1ページのみの場合
@@ -12,6 +17,7 @@
 require_once('phpQuery.php'); // phpQueryの読み込み
 
 $url = $_POST['url'];
+$home = $_POST['home'];
 // $url = 'https://shotworks.jp/sw/list/a_01/wd_2019-03-01/work?istd=UA1lm8k&wtk=1&wdf=2019-02-26&sv=-M1';
 // $url = 'https://shotworks.jp/sw/list/a_01/sd_2/md_1/work?sv='; // 解析したいのURL（条件を整えたページ）をここに代入
 $html = file_get_contents($url); // htmlを取得
