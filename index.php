@@ -5,7 +5,7 @@
 		<h5 class='col-9'>バイト先を地図で探そう</h5>
 		<p class='col-3 text-right mb-0'><a href='explain' target='_blank' class='btn btn-sm btn-secondary'>使い方</a></p>
 	</div>
-	<form action='./' method='post'>
+	<form action='./#map' method='post'>
 		<div class='row'>
 			<input type='text' name='url' class='form-control' placeholder='ショットワークスURLを貼り付け' value='<?php if($_POST["url"]){echo $_POST["url"];} ?>'>
 
@@ -211,4 +211,4 @@ function initMap() {
 
 <script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBsgF9GId6mfoadD6VKTwkfGO0QGGBmitg&callback=initMap'>//GoogleMapのAPIキー（&datum=wgs84）</script>
 
-<style> #map{height:92vh;} </style>
+<style> #map{height:100vh;} </style>
