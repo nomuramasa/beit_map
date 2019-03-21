@@ -12,12 +12,12 @@
 
 <div class='container'>
 	<h5 class='my-2'>バイト先を地図で探そう</h5>
-	<form action='./' method='post' class='col-12'>
+	<form action='./' method='post'>
 		<div class='row'>
-			<input type='text' name='url' class='form-control col-10' placeholder='条件指定済みのショットワークスURL'>
+			<input type='text' name='url' class='form-control' placeholder='条件指定済みのショットワークスURLを入力'>
 		</div>
-		<div class='row'>
-			<input type='text' name='home' class='form-control col-10' placeholder='自宅の近くの建物名、公園名などでもOK'> 
+		<div class='row mt-2'>
+			<input type='text' name='home' class='form-control' placeholder='自宅を入力　近くの建物名などでもOK'> 
 		</div>
 		<input type='submit' class='btn btn-success' value='探す'>
 		<p><a href='explain' target='_blank' class='btn btn-secondary'>使い方</a></p>
