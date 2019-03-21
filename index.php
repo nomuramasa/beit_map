@@ -11,16 +11,22 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
 <div class='container'>
-	<h5 class='my-2'>バイト先を地図で探そう</h5>
+	<div class='row my-2'>
+		<h5 class='col-9'>バイト先を地図で探そう</h5>
+		<p class='col-3 text-right mb-0'><a href='explain' target='_blank' class='btn btn-sm btn-secondary'>使い方</a></p>
+	</div>
 	<form action='./' method='post'>
 		<div class='row'>
-			<input type='text' name='url' class='form-control' placeholder='条件指定済みのショットワークスURLを入力'>
+			<input type='text' name='url' class='form-control' placeholder='ショットワークスURLを貼り付け' value='<?php if($_POST["url"]){echo $_POST["url"];} ?>'>
+
 		</div>
 		<div class='row mt-2'>
-			<input type='text' name='home' class='form-control' placeholder='自宅を入力　近くの建物名などでもOK'> 
+			<input type='text' name='home' class='form-control' placeholder='自宅を入力（近くの建物名などでもOK）' value='<?php if($_POST["home"]){echo $_POST["home"];} ?>'> 
 		</div>
-		<input type='submit' class='btn btn-success' value='探す'>
-		<p><a href='explain' target='_blank' class='btn btn-secondary'>使い方</a></p>
+		<div class='text-center mt-2'>
+			<input type='submit' class='btn btn-success' value='探す'>
+		</div>
+		
 	</form>
 </div>
 
