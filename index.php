@@ -49,7 +49,7 @@ if($pager){ // 他にもページある場合のみ
 $i = 0; // カウント
 foreach($pages as $page){ // ページ数だけループ
 
-	sleep(1) // 1秒休憩
+	sleep(1); // 1秒休憩
 	$html = file_get_contents($page); // htmlを取得
 	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
 	foreach($jobs as $job){ 
@@ -58,7 +58,7 @@ foreach($pages as $page){ // ページ数だけループ
 		$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
 		// まずは、1案件の場所情報を取得できるように
-		sleep(1) // 1秒休憩
+		sleep(1); // 1秒休憩
 		$job_html = file_get_contents($job_url); // 1案件のHTML
 		$doc = phpQuery::newDocument($job_html);
 
@@ -76,7 +76,7 @@ foreach($pages as $page){ // ページ数だけループ
 		if(empty($lat)){ //地図なしの場合
 			if($station){ // 駅名だけでも取得できた場合
 				$url = 'https://www.geocoding.jp/api/?q='.$station;
-				sleep(1) // 1秒休憩
+				sleep(1); // 1秒休憩
 				$xml = simplexml_load_file($url); // URLをxmlデータとして扱う
 				$obj = get_object_vars($xml); // xmlを配列に
 				$coord_xml = $obj['coordinate']; // 1階層潜ってxmlデータを得る
@@ -136,7 +136,7 @@ var marker=[]; var data=[]; var wor_lat=[]; var wor_long=[]; var iw=[];　var no
 function initMap() {
 
 	var myhome = {lat: Number(homeInfo['lat']), lng: Number(homeInfo['long'])} // 自分の家
-console.log(myhome)
+
   // 地図を作成
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 11,
@@ -189,7 +189,7 @@ console.log(myhome)
 		position: myhome,
 		map: map,
 		icon: {
-			url: 'house.png', // 家の画像
+			url: 'img/house.png', // 家の画像
 			scaledSize: new google.maps.Size(40, 40) //サイズ
 		}
 	});
