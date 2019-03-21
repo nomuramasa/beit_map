@@ -1,6 +1,8 @@
 <link rel='icon' href='./favicon.ico'> <!-- ファビコン -->
 <title>バイト探し地図</title>
 
+<meta name='viewport' content='width=device-width'> <!-- スマホ対応 -->
+
 <!--Bootstrap４に必要なCSSとJavaScriptを読み込み-->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
@@ -8,13 +10,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-<form action='./' method='post'>
-	<b>バイト先を地図で探そう</b>　<input type='text' name='url' style='width:600px'>　
-	<b>自宅</b> <input type='text' name='home'> 
-	<input type='submit' value='探す'>
-	<a href='explain' target='_blank' style='text-decoration: none; font-size: 12px;'>使い方</a>
-</form>
-
+<div class='container'>
+	<h5 class='my-2'>バイト先を地図で探そう</h5>
+	<form action='./' method='post' class='col-12'>
+		<div class='row'>
+			<input type='text' name='url' class='form-control col-10' placeholder='条件指定済みのショットワークスURL'>
+		</div>
+		<div class='row'>
+			<input type='text' name='home' class='form-control col-10' placeholder='自宅の近くの建物名、公園名などでもOK'> 
+		</div>
+		<input type='submit' class='btn btn-success' value='探す'>
+		<p><a href='explain' target='_blank' class='btn btn-secondary'>使い方</a></p>
+	</form>
+</div>
 
 
 <?php
