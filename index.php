@@ -49,7 +49,7 @@ if($pager){ // 他にもページある場合のみ
 $i = 0; // カウント
 foreach($pages as $page){ // ページ数だけループ
 
-
+	sleep(1) // 1秒休憩
 	$html = file_get_contents($page); // htmlを取得
 	$jobs = phpQuery::newDocument($html)->find('.workinfo_wrapper .catch_copy h2.catch a.work_list_click_log'); 
 	foreach($jobs as $job){ 
@@ -58,6 +58,7 @@ foreach($pages as $page){ // ページ数だけループ
 		$job_url = $scheme.'://'.$host.$href; // 仕事詳細のURL
 
 		// まずは、1案件の場所情報を取得できるように
+		sleep(1) // 1秒休憩
 		$job_html = file_get_contents($job_url); // 1案件のHTML
 		$doc = phpQuery::newDocument($job_html);
 
