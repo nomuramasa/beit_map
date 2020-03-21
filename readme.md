@@ -1,7 +1,7 @@
 # バイト探し地図
 
 <!-- 画像 -->
-<div align="center"><img src='screen_.png'></div>
+<div align="center"><img src='screen.png'></div>
 
 ## 概要
 家から近い単発バイトを、地図上で探せるツール。  
